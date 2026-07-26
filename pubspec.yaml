@@ -38,6 +38,8 @@ dependencies:
   dio: ^5.11.0
   get_it: ^9.2.1
   device_info_plus: ^13.2.0
+  sqflite: ^2.3.0
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:

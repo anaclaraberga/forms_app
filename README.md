@@ -1,17 +1,39 @@
-# forms_app
+# Forms App
 
-A new Flutter project.
+Aplicativo em Flutter desenvolvido para listagem e criação de publicações. 
 
-## Getting Started
+## Tecnologias e Dependências
 
-This project is a starting point for a Flutter application.
+- Flutter & Dart;
+- flutter_bloc: Gerenciamento de estado com Cubits;
+- get_it: Service Locator para Injeção de Dependências;
+- fpdart: Manipulação de Either para tratamento de erros;
+- dio: Cliente HTTP para comunicação com a API.
 
-A few resources to get you started if this is your first Flutter project:
+### Arquitetura escolhida: Clean Architecture
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Divisão das camadas:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Domain: Onde fica a entidade Post, os contratos dos repositórios e os Use Cases (FetchPosts, CreatePost);
+- Data: Onde implementa os contratos definidos pelo domínio. Comunica-se com os Data Sources (APIs/Banco de dados) e converte dados brutos em modelos e entidades;
+- Presentation: Onde fica as telas (UI) e gerenciadores de estado (Cubits).
+
+### Gerenciamento de Estado com Cubit
+Optei pelo uso do Cubit para o controle das telas (PostListCubit e CreatePostCubit) por uma questão de familiaridade. Pontos positivos do Cubit:
+
+- Previsibilidade: A UI reflete diretamente estados imutáveis (Loading, Success, Error);
+- Testabilidade: Permite testar as regras de apresentação e fluxos de telas de forma isolada do ciclo de vida dos widgets.
+
+### Tratamento de Erros com fpdart
+Em vez de eu utilizar exceções estilo try/catch genéricos, preferi o tipo Either<Failure, T> do fpdart:
+
+- O lado esquerdo (Left) representa falha/erro mapeado (Failure);
+- O lado direito (Right) representa retorno com sucesso (T).
+
+Isso obriga o código a tratar ambos os cenários em tempo de compilação, prevenindo erros inesperados no runtime.
+
+### Injeção de Dependência com GetIt
+O repositório, os use cases, o cliente HTTP e os cubits são gerenciados via GetIt:
+
+- Garante o desacoplamento, permitindo trocar implementações de API para testes por exemplo;
+- Facilita a reutilização de instâncias como Singleton por toda a aplicação.

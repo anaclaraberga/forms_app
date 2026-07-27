@@ -4,7 +4,7 @@ import '../error/failures.dart';
 class HttpClient {
   late final Dio _dio;
 
-  HttpClient(String? baseUrl) {
+  HttpClient([String? baseUrl]) {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl ?? 'https://jsonplaceholder.typicode.com',
@@ -50,7 +50,7 @@ class HttpClient {
       //   throw ServerFailure('Erro desconhecido');
       // }
 
-      throw _handleDioError(e);
+      throw _throwDioError(e);
     }
   }
 
@@ -58,17 +58,17 @@ class HttpClient {
     try {
       return await _dio.post(path, data: data);
     } on DioException catch (e) {
-      throw _handleDioError(e);
+      throw _throwDioError(e);
     }
   }
 
-  Failure _handleDioError(DioException error) {
+  Never _throwDioError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
       case DioExceptionType.connectionError:
-        return NetworkFailure(
+        throw NetworkFailure(
           'Falha na conexão com o servidor. Verifique sua internet.',
         );
 
@@ -77,13 +77,13 @@ class HttpClient {
         final message =
             error.response?.data?['message'] ??
             'Erro no servidor ($statusCode).';
-        return ServerFailure(message, statusCode: statusCode);
+        throw ServerFailure(message, statusCode: statusCode);
 
       case DioExceptionType.cancel:
-        return ServerFailure('A requisição foi cancelada.');
+        throw ServerFailure('A requisição foi cancelada.');
 
       default:
-        return ServerFailure('Ocorreu um erro inesperado.');
+        throw ServerFailure('Ocorreu um erro inesperado.');
     }
   }
 }

@@ -60,48 +60,50 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Novo Post')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Título'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'O título é obrigatório.';
-                  }
-                  if (value.length > 50) {
-                    return 'O título não pode ter mais de 50 caracteres.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _bodyController,
-                decoration: const InputDecoration(labelText: 'Conteúdo'),
-                maxLines: 3,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'O conteúdo é obrigatório.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _submitForm,
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text('Salvar'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(labelText: 'Título'),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'O título é obrigatório.';
+                    }
+                    if (value.length > 50) {
+                      return 'O título não pode ter mais de 50 caracteres.';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _bodyController,
+                  decoration: const InputDecoration(labelText: 'Conteúdo'),
+                  maxLines: 3,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'O conteúdo é obrigatório.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _submitForm,
+                    child: _isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Salvar'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

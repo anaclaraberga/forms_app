@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:forms_app/app/features/posts/domain/entities/post.dart';
 import 'package:forms_app/app/features/posts/domain/use_cases/get_posts_usecase.dart';
 import 'post_list_state.dart';
 
@@ -18,31 +19,55 @@ class PostListCubit extends Cubit<PostListState> {
     );
   }
 
+  void addPost(Post newPost) {
+    if (state is PostListSuccess) {
+      final currentState = state as PostListSuccess;
+
+      final updatedPosts = [newPost, ...currentState.posts];
+
+      final updatedFiltered = currentState.searchQuery.isEmpty
+          ? updatedPosts
+          : updatedPosts.where((post) {
+              return post.title.toLowerCase().contains(
+                currentState.searchQuery.toLowerCase(),
+              );
+            }).toList();
+
+      emit(
+        PostListSuccess(
+          posts: updatedPosts,
+          filteredPosts: updatedFiltered,
+          searchQuery: currentState.searchQuery,
+        ),
+      );
+    }
+  }
+
   void filterPosts(String query) {
-      if (state is PostListSuccess) {
-        final currentState = state as PostListSuccess;
+    if (state is PostListSuccess) {
+      final currentState = state as PostListSuccess;
 
-        if (query.isEmpty) {
-          emit(
-            PostListSuccess(
-              posts: currentState.posts,
-              filteredPosts: currentState.posts,
-              searchQuery: '',
-            ),
-          );
-        } else {
-          final filtered = currentState.posts.where((post) {
-            return post.title.toLowerCase().contains(query.toLowerCase());
-          }).toList();
+      if (query.isEmpty) {
+        emit(
+          PostListSuccess(
+            posts: currentState.posts,
+            filteredPosts: currentState.posts,
+            searchQuery: '',
+          ),
+        );
+      } else {
+        final filtered = currentState.posts.where((post) {
+          return post.title.toLowerCase().contains(query.toLowerCase());
+        }).toList();
 
-          emit(
-            PostListSuccess(
-              posts: currentState.posts,
-              filteredPosts: filtered,
-              searchQuery: query,
-            ),
-          );
-        }
+        emit(
+          PostListSuccess(
+            posts: currentState.posts,
+            filteredPosts: filtered,
+            searchQuery: query,
+          ),
+        );
       }
     }
+  }
 }
